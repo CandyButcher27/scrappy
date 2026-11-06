@@ -35,6 +35,26 @@ attempts: scrapling_http → http 403
 | YouTube videos | yt-dlp: title, channel, stats, description and English captions as text | TED-Ed talk |
 | Web search | Exa, then Tavily, then Google results via SerpAPI | all three |
 
+### Search sources (`search --on`)
+
+| `--on` | Searches | Needs |
+|---|---|---|
+| `hackernews` | Hacker News stories (Algolia API) | nothing |
+| `wikipedia` | English Wikipedia articles | nothing |
+| `arxiv` | arXiv papers with abstracts | nothing |
+| `openalex` | research papers across disciplines, with citation counts | nothing |
+| `stackoverflow` | Stack Overflow questions | nothing |
+| `github` | GitHub repositories | nothing (`GITHUB_TOKEN` raises the rate limit) |
+| `bluesky` | Bluesky posts | nothing |
+| `youtube` | YouTube videos (yt-dlp, no API quota) | nothing |
+| `reddit` | Reddit posts | `APIFY_API_KEY` |
+| `x` | X posts | `APIFY_API_KEY` |
+| `instagram` | posts under a hashtag | `APIFY_API_KEY` |
+| `tiktok` | TikTok videos | `APIFY_API_KEY` |
+| `linkedin` | LinkedIn posts | `APIFY_API_KEY` |
+
+All 13 were verified live.
+
 Not covered:
 
 - Anything behind a login or paywall, and private accounts.
@@ -92,7 +112,7 @@ FIRECRAWL_API_KEY=...
 EXA_API_KEY=...
 ```
 
-Static pages, crawling and YouTube work with no keys at all.
+Static pages, crawling, YouTube and the eight free search sources work with no keys at all.
 
 ## Use as an MCP server
 
@@ -124,14 +144,14 @@ Tools:
 | Tool | Arguments | Returns |
 |---|---|---|
 | `fetch` | `url`, `expect`, `limit` (posts/comments, default 20), `max_chars` (default 20000), `include_data` | text of the page, posts or transcript, plus every attempt |
-| `search` | `query`, `n` (default 5), `on` (`reddit`, `x`, `instagram`, `tiktok`, `linkedin`) | results with title or author, text and URL |
+| `search` | `query`, `n` (default 5), `on` (any source in the table above) | results with title or author, text and URL |
 | `crawl` | `url`, `limit` (default 10), `depth` (default 2), `max_chars_per_page` (default 3000) | pages with title and text, skipped URLs with reasons |
 
 ## Use from the command line
 
 ```
 scrappy fetch <url> [--expect TEXT] [--via METHOD] [--limit N]
-scrappy search "<query>" [-n 5] [--on reddit|x|instagram|tiktok|linkedin]
+scrappy search "<query>" [-n 5] [--on SOURCE]
 scrappy crawl <url> [--limit 20] [--depth 2] [--delay 1]
 scrappy mcp
 scrappy setup
@@ -155,6 +175,7 @@ scrappy fetch https://www.reddit.com/r/ClaudeAI/ --limit 10
 scrappy fetch https://www.instagram.com/nasa/ --limit 5
 scrappy fetch https://www.youtube.com/watch?v=QyRqlTV60zM
 scrappy search "claude code" --on reddit -n 10
+scrappy search "vector databases" --on hackernews
 scrappy search "open source web scraping framework"
 scrappy crawl https://books.toscrape.com/ --limit 30 --depth 2
 ```
@@ -194,7 +215,7 @@ fetch(url)
   anything else        → Scrapling HTTP → Scrapling browser → Firecrawl → Bright Data
   after each source: reject HTTP errors, block pages, missing --expect text, near-empty pages
 
-search(query)          → Exa → Tavily → SerpAPI, or one Apify actor with --on
+search(query)          → Exa → Tavily → SerpAPI, or one source with --on
 crawl(url)             → fetch the start URL, then reuse the method that worked for every page
 ```
 
