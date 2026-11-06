@@ -21,6 +21,7 @@ class Result:
     text: str = ""
     status: int | None = None
     data: dict | list | None = field(default=None, repr=False)
+    links: list[str] = field(default_factory=list, repr=False)
 
 
 def problem(result: Result, expect: str | None = None) -> str | None:
