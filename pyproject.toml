@@ -1,0 +1,25 @@
+[project]
+name = "scrappy"
+version = "0.1.0"
+description = "Scraping agent: routes each URL or query to the cheapest source that works and checks the result."
+requires-python = ">=3.12"
+dependencies = [
+    "markdownify>=1.2.0",
+    "scrapling[fetchers]>=0.5.1",
+    "yt-dlp>=2026.8.19",
+]
+
+[project.scripts]
+scrappy = "scrappy.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]
