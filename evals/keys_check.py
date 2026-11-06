@@ -28,7 +28,6 @@ CHECKS = {
     "GITHUB_TOKEN": lambda: call("https://api.github.com/rate_limit", {"Authorization": f"Bearer {k('GITHUB_TOKEN')}"}),
     "GROQ_API_KEY": lambda: call("https://api.groq.com/openai/v1/models", {"Authorization": f"Bearer {k('GROQ_API_KEY')}"}),
     "SERP_API_KEY": lambda: call(f"https://serpapi.com/account?api_key={k('SERP_API_KEY')}"),
-    "OPENAI_API_KEY": lambda: call("https://api.openai.com/v1/models", {"Authorization": f"Bearer {k('OPENAI_API_KEY')}"}),
     "OPENALEX_API_KEY": lambda: call(f"https://api.openalex.org/works?search=web%20scraping&per-page=1&api_key={k('OPENALEX_API_KEY')}"),
     "YOUTUBE_API_KEY": lambda: call(f"https://www.googleapis.com/youtube/v3/videos?id=QyRqlTV60zM&part=snippet&key={k('YOUTUBE_API_KEY')}"),
     "EXA_API_KEY": lambda: call("https://api.exa.ai/search", {"x-api-key": k("EXA_API_KEY")}, {"query": "web scraping framework", "numResults": 1}),
@@ -44,7 +43,7 @@ def summary(name, data):
         return str(data)[:150]
     match name:
         case "GITHUB_TOKEN": return f"core limit {data['resources']['core']['limit']}"
-        case "GROQ_API_KEY" | "OPENAI_API_KEY": return f"{len(data['data'])} models"
+        case "GROQ_API_KEY": return f"{len(data['data'])} models"
         case "SERP_API_KEY": return f"plan={data.get('plan_name')} searches_left={data.get('total_searches_left')}"
         case "OPENALEX_API_KEY": return f"{data['meta']['count']} works match"
         case "YOUTUBE_API_KEY": return data["items"][0]["snippet"]["title"][:60]
