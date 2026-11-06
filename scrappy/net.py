@@ -16,7 +16,7 @@ for env_file in ENV_FILES:
 def key(name: str) -> str:
     value = os.environ.get(name, "")
     if not value:
-        raise RuntimeError(f"{name} is not set (environment, ./.env or ~/.scrappy/.env)")
+        raise RuntimeError(f"{name} is not set; run `scrappy setup` to add it")
     return value
 
 

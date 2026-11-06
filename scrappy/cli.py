@@ -32,7 +32,9 @@ def main() -> None:
     c.add_argument("--delay", type=float, default=1.0, help="seconds between requests (default 1)")
 
     sub.add_parser("mcp", help="run as an MCP server over stdio")
-    sub.add_parser("setup", help="download the browser used by the stealth fetcher")
+    st = sub.add_parser("setup", help="enter API keys and download the stealth browser")
+    st.add_argument("--check", action="store_true", help="only test the keys already configured")
+    st.add_argument("--no-browser", action="store_true", help="skip the browser download")
     args = parser.parse_args()
 
     if args.command == "mcp":
@@ -40,9 +42,9 @@ def main() -> None:
 
         return serve()
     if args.command == "setup":
-        from scrapling.cli import install
+        from .setup import run_check, run_setup
 
-        return install([], standalone_mode=False)
+        return run_check() if args.check else run_setup(browser=not args.no_browser)
 
     if args.command == "fetch":
         out = agent.run_fetch(args.url, args.expect, args.via, args.limit)
