@@ -1,3 +1,4 @@
+import gzip
 import json
 import os
 import urllib.request
@@ -20,13 +21,17 @@ def key(name: str) -> str:
     return value
 
 
+USER_AGENT = "scrappy/0.2 (+https://github.com/CandyButcher27/scrappy)"
+
+
 def request(url: str, body=None, headers=None, timeout: float = 120):
     data = None if body is None else json.dumps(body).encode()
     req = urllib.request.Request(
-        url, data=data, headers={"Content-Type": "application/json", "User-Agent": "scrappy/0.2", **(headers or {})}
+        url, data=data, headers={"Content-Type": "application/json", "User-Agent": USER_AGENT, **(headers or {})}
     )
     with urllib.request.urlopen(req, timeout=timeout) as r:
-        return r.status, r.headers, r.read()
+        raw = r.read()
+        return r.status, r.headers, gzip.decompress(raw) if r.headers.get("Content-Encoding") == "gzip" else raw
 
 
 def request_json(url: str, body=None, headers=None, timeout: float = 120):

@@ -7,8 +7,11 @@ from urllib.robotparser import RobotFileParser
 from .check import Result, problem
 from .net import request
 from .pages import brightdata, firecrawl, scrapling_browser, scrapling_http
-from .platforms import fetch_platform, normalize, platform_for, social_search
+from .platforms import SEARCHABLE, fetch_platform, normalize, platform_for, social_search
 from .search import ENGINES
+from .sources import FREE
+
+SEARCH_ON = [*FREE, *SEARCHABLE]
 
 PAGE_CHAIN = [scrapling_http, scrapling_browser, firecrawl, brightdata]
 METHODS = {f.__name__: f for f in PAGE_CHAIN}
@@ -49,12 +52,19 @@ def run_fetch(url: str, expect: str | None = None, via: str | None = None, limit
 
 def run_search(query: str, n: int = 5, on: str | None = None) -> dict:
     if on:
+        method = on if on in FREE else f"apify_{on}"
+        data = None
         try:
-            result = social_search(on, query, n)
+            if on in FREE:
+                results = FREE[on](query, n)
+            else:
+                data = social_search(on, query, n).data
+                results = [normalize(i) for i in data]
+            reason = None if results else "no results"
         except Exception as e:
-            return {"ok": False, "query": query, "on": on, "results": [], "attempts": [{"method": f"apify_{on}", "error": f"{type(e).__name__}: {e}"}]}
-        return {"ok": True, "query": query, "on": on, "method": result.method, "results": [normalize(i) for i in result.data],
-                "data": result.data, "attempts": [{"method": result.method, "error": None}]}
+            results, reason = [], f"{type(e).__name__}: {e}"
+        return {"ok": reason is None, "query": query, "on": on, "method": method, "results": results, "data": data,
+                "attempts": [{"method": method, "error": reason}]}
     attempts = []
     for engine in ENGINES:
         try:

@@ -4,7 +4,6 @@ import sys
 from importlib.metadata import version
 
 from . import agent
-from .platforms import SEARCHABLE
 
 
 def main() -> None:
@@ -22,7 +21,7 @@ def main() -> None:
     s = sub.add_parser("search", help="search the web, or a social platform with --on")
     s.add_argument("query")
     s.add_argument("-n", type=int, default=5)
-    s.add_argument("--on", choices=SEARCHABLE, help="search this platform instead of the web")
+    s.add_argument("--on", choices=agent.SEARCH_ON, help="search one source instead of the web (free: hackernews, wikipedia, arxiv, stackoverflow, github, openalex, bluesky, youtube; Apify: reddit, x, instagram, tiktok, linkedin)")
 
     c = sub.add_parser("crawl", help="follow links within one site")
     c.add_argument("url")

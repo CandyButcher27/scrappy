@@ -3,7 +3,6 @@ from importlib.metadata import version
 from mcp.server.mcpserver import MCPServer
 
 from . import agent
-from .platforms import SEARCHABLE
 
 server = MCPServer(
     "scrappy",
@@ -11,7 +10,8 @@ server = MCPServer(
     instructions=(
         "Web and social scraping. fetch reads one URL (pages, Reddit, X, Instagram, TikTok, Facebook, LinkedIn jobs, "
         "YouTube transcripts), trying cheap sources first and checking each result is real content. search finds pages "
-        "on the web, or posts on a social platform with `on`. crawl follows links within one site. Every result lists "
+        "on the web, or with `on` searches one source: Hacker News, Wikipedia, arXiv, Stack Overflow, GitHub, OpenAlex, "
+        "Bluesky, YouTube, Reddit, X, Instagram, TikTok or LinkedIn. crawl follows links within one site. Every result lists "
         "the attempts made; paid sources (Firecrawl, Bright Data, Apify) are used only when free ones fail."
     ),
 )
@@ -40,12 +40,13 @@ def fetch(url: str, expect: str | None = None, limit: int = 20, max_chars: int =
 
 @server.tool()
 def search(query: str, n: int = 5, on: str | None = None) -> dict:
-    """Search the web (Exa, then Tavily, then Google via SerpAPI), or a social platform when `on` is set.
+    """Search the web (Exa, then Tavily, then Google via SerpAPI), or one source when `on` is set.
 
-    on: one of reddit, x, instagram, tiktok, linkedin. Instagram searches a hashtag.
+    on, free: hackernews, wikipedia, arxiv, stackoverflow, github (repositories), openalex (research papers),
+    bluesky, youtube. on, through Apify: reddit, x, instagram (hashtag), tiktok, linkedin (posts).
     """
-    if on and on not in SEARCHABLE:
-        return {"ok": False, "error": f"on must be one of {SEARCHABLE}"}
+    if on and on not in agent.SEARCH_ON:
+        return {"ok": False, "error": f"on must be one of {agent.SEARCH_ON}"}
     out = agent.run_search(query, n, on)
     out.pop("data", None)
     return out

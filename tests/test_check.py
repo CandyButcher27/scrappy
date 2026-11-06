@@ -70,3 +70,14 @@ def test_normalize_social_items():
 def test_vtt_to_text_drops_timing_and_repeats():
     vtt = "WEBVTT\nKind: captions\n\n00:00.000 --> 00:01.000\nhello <c>there</c>\n\n00:01.000 --> 00:02.000\nhello there\nworld\n"
     assert vtt_to_text(vtt) == "hello there world"
+
+
+def test_search_on_routes_free_sources_and_reports_failures(monkeypatch):
+    import scrappy.agent as agent
+
+    monkeypatch.setitem(agent.FREE, "hackernews", lambda q, n: [{"author": "a", "title": q, "text": "", "url": "u"}])
+    out = agent.run_search("rust", 1, on="hackernews")
+    assert out["ok"] and out["method"] == "hackernews" and out["results"][0]["title"] == "rust"
+    monkeypatch.setitem(agent.FREE, "hackernews", lambda q, n: [])
+    assert agent.run_search("rust", 1, on="hackernews")["attempts"] == [{"method": "hackernews", "error": "no results"}]
+    assert {"hackernews", "github", "reddit", "x"} <= set(agent.SEARCH_ON)
