@@ -1,6 +1,7 @@
 import argparse
 import json
 import sys
+from importlib.metadata import version
 
 from . import agent
 
@@ -8,6 +9,7 @@ from . import agent
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(prog="scrappy", description="Fetch a URL or search the web; prints JSON.")
+    parser.add_argument("--version", action="version", version=f"scrappy {version('scrappy')}")
     sub = parser.add_subparsers(dest="command", required=True)
     f = sub.add_parser("fetch", help="fetch a URL through the cheapest method that works")
     f.add_argument("url")
