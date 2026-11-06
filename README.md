@@ -53,18 +53,27 @@ npx scrappy-agent --version
 uvx scrappy-agent --version
 ```
 
-For JavaScript-heavy pages, download the stealth browser once:
+Then run the setup once:
 
 ```
 npx scrappy-agent setup
 ```
 
-Without it, the browser step fails and scrappy moves on to Firecrawl.
+It asks for each API key below, shows where to get it, tests it with one cheap call, and saves
+the keys to `~/.scrappy/.env`. Press Enter to skip a key; that source is simply left out. It then
+offers to download the stealth browser for JavaScript-heavy pages (without it, scrappy moves on
+to Firecrawl for those pages).
+
+Test the saved keys at any time:
+
+```
+npx scrappy-agent setup --check
+```
 
 ## API keys
 
 Each key enables one source; a missing key only removes that source from the chain. scrappy
-reads, in order: environment variables, `./.env`, then `~/.scrappy/.env`.
+reads, in order: environment variables, `./.env`, then `~/.scrappy/.env` (written by `setup`).
 
 | Variable | Source | Used for | Get it at |
 |---|---|---|---|
