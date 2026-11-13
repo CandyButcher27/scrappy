@@ -1,20 +1,37 @@
 [project]
-name = "scrappy"
-version = "0.1.0"
-description = "Scraping agent: routes each URL or query to the cheapest source that works and checks the result."
+name = "scrappy-agent"
+version = "0.2.0"
+description = "Scraping agent and MCP server: fetch, crawl and search pages and social platforms through the cheapest source that works."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.12"
+keywords = ["scraping", "crawler", "mcp", "agent", "reddit", "twitter", "instagram", "tiktok", "youtube"]
+classifiers = [
+    "Programming Language :: Python :: 3.12",
+    "Environment :: Console",
+    "Topic :: Internet :: WWW/HTTP",
+]
 dependencies = [
     "markdownify>=1.2.0",
+    "mcp>=2.0.0",
     "scrapling[fetchers]>=0.5.1",
     "yt-dlp>=2026.8.19",
 ]
 
+[project.urls]
+Repository = "https://github.com/CandyButcher27/scrappy"
+
 [project.scripts]
 scrappy = "scrappy.cli:main"
+scrappy-agent = "scrappy.cli:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["scrappy"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

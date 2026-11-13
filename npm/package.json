@@ -1,0 +1,32 @@
+{
+  "name": "scrappy-agent",
+  "version": "0.2.0",
+  "description": "Scraping agent and MCP server: fetch, crawl and search pages and social platforms through the cheapest source that works.",
+  "bin": {
+    "scrappy-agent": "bin/scrappy.js",
+    "scrappy": "bin/scrappy.js"
+  },
+  "files": [
+    "bin"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "scraping",
+    "crawler",
+    "mcp",
+    "mcp-server",
+    "agent",
+    "reddit",
+    "twitter",
+    "instagram",
+    "tiktok",
+    "youtube"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CandyButcher27/scrappy.git"
+  },
+  "license": "MIT"
+}
