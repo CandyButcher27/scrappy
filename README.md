@@ -8,11 +8,11 @@ Use it three ways:
 
 - as an **MCP server**, so Claude Code, Cursor, Claude Desktop or any MCP client can call `fetch`,
   `search` and `crawl` as tools
-- from the **command line** with `npx scrappy-agent` or `uvx scrappy-agent`
+- from the **command line** with `uvx`
 - as a **Python library** (`from scrappy import agent`)
 
 ```
-$ npx scrappy-agent fetch https://nopecha.com/demo/cloudflare
+$ uvx --from git+https://github.com/CandyButcher27/scrappy scrappy fetch https://nopecha.com/demo/cloudflare
 attempts: scrapling_http → http 403
           scrapling_browser → http 403
           firecrawl → ok
@@ -65,18 +65,23 @@ Not covered:
 
 ## Install
 
-scrappy is a Python package. Both commands below fetch and run the published release; `npx`
-installs [uv](https://docs.astral.sh/uv/) first if it is missing.
+scrappy is a Python package, run straight from this repository with [uv](https://docs.astral.sh/uv/).
+It is not on PyPI or npm yet.
 
 ```
-npx scrappy-agent --version
-uvx scrappy-agent --version
+uvx --from git+https://github.com/CandyButcher27/scrappy scrappy --version
+```
+
+Or install it once, so `scrappy` is on your PATH:
+
+```
+uv tool install git+https://github.com/CandyButcher27/scrappy
 ```
 
 Then run the setup once:
 
 ```
-npx scrappy-agent setup
+uvx --from git+https://github.com/CandyButcher27/scrappy scrappy setup
 ```
 
 It asks for each API key below, shows where to get it, tests it with one cheap call, and saves
@@ -87,7 +92,7 @@ to Firecrawl for those pages).
 Test the saved keys at any time:
 
 ```
-npx scrappy-agent setup --check
+uvx --from git+https://github.com/CandyButcher27/scrappy scrappy setup --check
 ```
 
 ## API keys
@@ -119,7 +124,7 @@ Static pages, crawling, YouTube and the eight free search sources work with no k
 Claude Code:
 
 ```
-claude mcp add scrappy -- npx -y scrappy-agent mcp
+claude mcp add scrappy -- uvx --from git+https://github.com/CandyButcher27/scrappy scrappy mcp
 ```
 
 Cursor, Claude Desktop and other clients (`mcpServers` in their config file):
@@ -128,16 +133,15 @@ Cursor, Claude Desktop and other clients (`mcpServers` in their config file):
 {
   "mcpServers": {
     "scrappy": {
-      "command": "npx",
-      "args": ["-y", "scrappy-agent", "mcp"],
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/CandyButcher27/scrappy", "scrappy", "mcp"],
       "env": { "APIFY_API_KEY": "...", "FIRECRAWL_API_KEY": "...", "EXA_API_KEY": "..." }
     }
   }
 }
 ```
 
-Keys can go in the `env` block or in `~/.scrappy/.env`. Use `"command": "uvx", "args":
-["scrappy-agent", "mcp"]` to skip Node.
+Keys can go in the `env` block or in `~/.scrappy/.env`.
 
 Tools:
 
@@ -158,8 +162,7 @@ scrappy setup
 scrappy --version
 ```
 
-Prefix with `npx scrappy-agent` or `uvx scrappy-agent` (the commands are `scrappy` and
-`scrappy-agent` once installed).
+Without `uv tool install`, prefix with `uvx --from git+https://github.com/CandyButcher27/scrappy`.
 
 - `--expect TEXT`: text that must appear in the result. Use it for JavaScript pages: the HTTP fetch
   returns the page shell without the content, the check fails, and scrappy moves to the browser.
